@@ -1,0 +1,13 @@
+eureka:
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+  instance:
+    prefer-ip-address: true
+  server:
+    enable-self-preservation: false
+server:
+  port: 8761
+spring:
+  application:
+    name: service-registry

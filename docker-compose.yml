@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: microservices_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: microservices_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  service-registry:
+    build: ./service-registry
+    container_name: service-registry
+    ports:
+      - "8761:8761"
+
+  config-server:
+    build: ./config-server
+    container_name: config-server
+    ports:
+      - "5000:5000"
+    environment:
+      - CONFIG_SERVER_URL=http://config-server:5000
+    depends_on:
+      - service-registry
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8084:8084"
+    environment:
+      - CONFIG_SERVER_URL=http://config-server:5000
+    depends_on:
+      - service-registry
+      - config-server
+
+  hotel-service:
+    build: ./hotel-service
+    container_name: hotel-service
+    ports:
+      - "8082:8082"
+    environment:
+      - CONFIG_SERVER_URL=http://config-server:5000
+      - DB_PASSWORD=${DB_PASSWORD}
+      - OKTA_CLIENT_ID=${OKTA_CLIENT_ID}
+      - OKTA_CLIENT_SECRET=${OKTA_CLIENT_SECRET}
+    depends_on:
+      - mysql
+      - service-registry
+
+  rating-service:
+    build: ./rating-service
+    container_name: rating-service
+    ports:
+      - "8083:8083"
+    environment:
+      - CONFIG_SERVER_URL=http://config-server:5000
+      - DB_PASSWORD=${DB_PASSWORD}
+      - OKTA_CLIENT_ID=${OKTA_CLIENT_ID}
+      - OKTA_CLIENT_SECRET=${OKTA_CLIENT_SECRET}
+    depends_on:
+      - mysql
+      - service-registry
+
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    ports:
+      - "8081:8081"
+    environment:
+      - CONFIG_SERVER_URL=http://config-server:5000
+      - DB_PASSWORD=${DB_PASSWORD}
+      - OKTA_CLIENT_ID=${OKTA_CLIENT_ID}
+      - OKTA_CLIENT_SECRET=${OKTA_CLIENT_SECRET}
+    depends_on:
+      - mysql
+      - service-registry
+
+volumes:
+  mysql_data:
