@@ -56,3 +56,5 @@ application.yml
 *.yml
 !*.yml.demo
 !docker-compose*.yml
+
+!.mvn/wrapper/maven-wrapper.properties
