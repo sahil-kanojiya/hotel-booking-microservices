@@ -1,4 +1,4 @@
-# Microservice Project Example
+# Hotel Booking Microservices Ecosystem
 
 This is a comprehensive Spring Boot microservices project demonstrating a distributed system architecture. The project
 consists of several independent microservices communicating seamlessly, utilizing modern Spring Cloud and Spring Boot
