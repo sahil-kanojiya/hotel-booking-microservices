@@ -58,3 +58,7 @@ application.yml
 !docker-compose*.yml
 
 !.mvn/wrapper/maven-wrapper.properties
+
+# Whitelist GitHub configurations
+!.github/
+!.github/**
